@@ -1,0 +1,90 @@
+<html lang="en">
+<head>
+
+</head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<title>User Profile</title>
+<link rel="stylesheet" href="index.css">
+
+<script>
+    (async function init() {
+        const response = await fetch('http://localhost:3000/get-profile');
+        console.log("response", response);
+        const user = await response.json();
+        console.log(JSON.stringify(user));
+
+        document.getElementById('name').textContent = user.name ? user.name : 'Dogesh';
+        document.getElementById('email').textContent = user.email ? user.email : 'dogesh.bhai@gmail.com';
+        document.getElementById('interests').textContent = user.interests ? user.interests : 'social-works';
+
+        const cont = document.getElementById('container');
+        cont.style.display = 'block';
+    })();
+
+    async function handleUpdateProfileRequest() {
+        const contEdit = document.getElementById('container-edit');
+        const cont = document.getElementById('container');
+
+        const payload = {
+            name: document.getElementById('input-name').value,
+            email: document.getElementById('input-email').value,
+            interests: document.getElementById('input-interests').value
+        };
+
+        const response = await fetch('http://localhost:3000/update-profile', {
+            method: "POST",
+            headers: {
+              'Accept': 'application/json',
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(payload)
+        });
+        const jsonResponse = await response.json();
+
+        document.getElementById('name').textContent = jsonResponse.name;
+        document.getElementById('email').textContent = jsonResponse.email;
+        document.getElementById('interests').textContent = jsonResponse.interests;
+
+        cont.style.display = 'block';
+        contEdit.style.display = 'none';
+    }
+
+    function updateProfile() {
+        const contEdit = document.getElementById('container-edit');
+        const cont = document.getElementById('container');
+
+        document.getElementById('input-name').value = document.getElementById('name').textContent;
+        document.getElementById('input-email').value = document.getElementById('email').textContent;
+        document.getElementById('input-interests').value = document.getElementById('interests').textContent;
+
+        cont.style.display = 'none';
+        contEdit.style.display = 'block';
+    }
+</script>
+<body>
+    <div class='container' id='container'>
+        <h1>User profile</h1>
+        <img src='images/profile-1.jpg' alt="user-profile">
+        <span>Name: </span><h3 id='name'>Dogesh Bhau</h3>
+        <hr />
+        <span>Email: </span><h3 id='email'>dogesh.bhai@gmail.com</h3>
+        <hr />
+        <span>Interests: </span><h3 id='interests'>Flexing , Social Works , Helping people , Providing Safety to peoples</h3>
+        <hr />
+        <button class='button' onclick="updateProfile()">Edit Profile</button>
+    </div>
+    <div class='container' id='container-edit'>
+        <h1>User profile</h1>
+        <img src='images/profile-2.jpg' alt="user-profile">
+        <span>Name: </span><label for="input-name">Enter your name</label><input type="text" id="input-name" value="Dogesh" />
+        <hr />
+        <span>Email: </span><label for="input-email">Enter your email</label><input type="email" id="input-email" value="dogesh.bhai@gmail.com" />
+        <hr />
+        <span>Interests: </span><label for="input-interests">Enter your interests</label><input type="text" id="input-interests" value="social-works" />
+        <hr />
+        <button class="button" onclick="handleUpdateProfileRequest()">Update Profile</button>
+    </div>
+</body>
+</html>
